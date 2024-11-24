@@ -1,0 +1,131 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-size: 1.5rem;
+}
+
+li {
+    list-style-type: none;
+}
+
+button {
+    font-size: 1.5rem;
+}
+
+button:hover {
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+#container {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    height: 100vh;
+}
+
+#side-menu {
+    background-color: aqua;
+    grid-column: 1/2;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 80px;
+}
+
+#main-content {
+    grid-column: 2/2;
+}
+
+.cards {
+    width: 250px;
+    height: 150px;
+    border-radius: 10px;
+}
+
+#search-calendar-form {
+    padding-top: 30px;
+}
+
+#main {
+    justify-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+#main-title {
+    text-align: center;
+}
+
+#content {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(350px, 450px));
+    gap: 20px;
+}
+
+#reminder-card {
+    border: 2px solid black;
+}
+
+#add-button {
+    position: fixed;
+    bottom: 10%;
+    left: 90%;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color:rgb(239, 197, 72);
+    border: none;
+}
+
+#add-card-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 100px;
+}
+
+.card-form {
+    background-color: rgb(225, 205, 30);
+    width: 400px;
+    height: 300px;
+}
+
+#priority-container h2 {
+    margin-top: 10px;
+}
+#priority {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+#priority button {
+    font-size: 1.2em;
+}
+
+#priority-container {
+    font-size: 1.2em;
+}
+
+#reminder-card {
+    font-size: 1.2em;
+}
+
+#reminder-card textarea {
+    width: 100%;
+    height: 150px;
+    padding: 12px 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 1.4rem;
+    resize: none;
+}

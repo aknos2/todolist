@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List Odin Project</title>
+</head>
+<body>
+    <div id="container">
+        <div id="side-menu">
+            <form id="search-calendar-form">
+                <button id="searchbar-btn" type="submit"></button>
+                <input id="searchbar" name="search" type="search" placeholder="Search">
+            </form>
+            <button class="cards" id="today-btn"><li>Today</li></button>
+            <button class="cards" id="scheduled-btn"><li>Scheduled</li></button>
+            <button class="cards" id="all-btn"><li>All</li></button>
+        </div>
+        <div id="main">
+            <div id="main-title"><h1>test</h1></div>
+                <div id="content">
+                    <div id="reminder-card">                    
+                        <h2>Morning</h2>
+                        <p>Do the dishes</p>
+                        <p>Priority: High</p>
+                        <p>17:00h</p>
+                    </div>
+                    <div id="reminder-card">                    
+                        <h2>Morning</h2>
+                        <p>Do the dishes</p>
+                        <p>Priority: High</p>
+                        <p>17:00h</p>
+                    </div>
+                    <div id="reminder-card">                    
+                        <h2>Morning</h2>
+                        <p>Do the dishes</p>
+                        <p>Priority: High</p>
+                        <p>17:00h</p>
+                    </div>
+                </div>
+
+                <div id="my-list"></div>
+                <button id="add-button" type="button" onclick="openForm()">Add +</button>
+
+                <div id="add-card-form">
+                    <div class="card-form" id="priority-container">
+                        <h2>Priority</h2>
+                        <div id="priority">
+                            <button id="low-btn">Low</button>
+                            <button id="medium-btn">Medium</button>
+                            <button id="high-btn">High</button>
+                        </div>    
+                    </div>
+
+                    <div class="card-form" id="remind-time-container">
+                        <h2>Remind me:</h2>
+                        <div id="remind-time">
+
+                        </div>
+                    </div>
+
+                    <div class="card-form" id="reminder-card">
+                        <h2>Reminder:</h2>
+                        <form>
+                            <textarea name="reminder" id="reminder"></textarea>
+                        </form>
+                    </div>
+                </div>
+    </div>
+</body>
+</html>
