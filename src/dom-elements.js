@@ -1,0 +1,15 @@
+export const confirmCloseDialog = document.getElementById("confirm-close-dialog");
+export const closeTaskFormBtn = document.getElementById("close-task-form-btn");
+//export const cancelBtn = document.getElementById("cancel-btn");
+//export const discardBtn = document.getElementById("discard-btn");
+export const cardForm = document.querySelector("#card-form");
+export const displayForm = document.querySelector("#add-card-form");
+export const addButton = document.querySelector("#add-button");
+export const reminder = document.querySelector("#reminder"); 
+export const time = document.querySelector("#time"); 
+export const date = document.querySelector("#date-input"); 
+export const priorityButtons = document.querySelectorAll("#priority input[type='button']");
+export const content = document.querySelector("#content");
+export const deleteButtons = document.querySelectorAll("#delete-btn");
+export const reminderCard = document.querySelector(".reminder-card");
+export const editButtons = document.querySelectorAll(".edit-btn");

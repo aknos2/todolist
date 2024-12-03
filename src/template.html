@@ -19,53 +19,91 @@
         <div id="main">
             <div id="main-title"><h1>test</h1></div>
                 <div id="content">
-                    <div id="reminder-card">                    
+                    <div class="reminder-card">                    
+                        <h2>Morning</h2>
+                        <p id="description">Do the dishes</p>
+                        <p id="priority-text"><strong>Priority:</strong> High</p>
+                        <select class="priority-dropdown hidden">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                        <div id="time-date-container">
+                            <p id="date-content">12-01-24</p>
+                            <p id="time-content">17:00</p>
+                        </div>
+                            <button id="delete-btn" class="form-btn" type="button" aria-label="close" >X</button>
+                            <input type="image" src="./icons/edit.svg" class="edit-btn" aria-label="edit" alt="edit button">
+                        </div>
+                    <div class="reminder-card">                    
                         <h2>Morning</h2>
                         <p>Do the dishes</p>
-                        <p>Priority: High</p>
-                        <p>17:00h</p>
+                        <p><strong>Priority:</strong> High</p>
+                        <div id="time-date-container">
+                            <p id="date-content">12-01-24</p>
+                            <p id="time-content">17:00</p>
+                        </div>
+                        <button id="delete-btn" class="close-task-form-btn" type="button" aria-label="close" >X</button>
                     </div>
-                    <div id="reminder-card">                    
+                    <div class="reminder-card">                    
                         <h2>Morning</h2>
                         <p>Do the dishes</p>
-                        <p>Priority: High</p>
-                        <p>17:00h</p>
-                    </div>
-                    <div id="reminder-card">                    
-                        <h2>Morning</h2>
-                        <p>Do the dishes</p>
-                        <p>Priority: High</p>
-                        <p>17:00h</p>
+                        <p><strong>Priority:</strong> High</p>
+                        <div id="time-date-container">
+                            <p id="date-content">12-01-24</p>
+                            <p id="time-content">17:00</p>
+                        </div>
+                        <button id="delete-btn" class="close-task-form-btn" type="button" aria-label="close" >X</button>
                     </div>
                 </div>
 
-                <div id="my-list"></div>
-                <button id="add-button" type="button" onclick="openForm()">Add +</button>
 
-                <div id="add-card-form">
-                    <div class="card-form" id="priority-container">
+                <div id="add-card-form" class="hidden">
+                    <form class="card-form" id="card-form">
+
+                        <div class="task-form-header">
+                            <button id="close-task-form-btn" class="close-task-form-btn" type="button" aria-label="close">
+                            <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#F44336" d="M21.5 4.5H26.501V43.5H21.5z" transform="rotate(45.001 24 24)" /><path fill="#F44336" d="M21.5 4.5H26.5V43.501H21.5z" transform="rotate(135.008 24 24)" /></svg>
+                            </button>
+                        </div>
+                
                         <h2>Priority</h2>
                         <div id="priority">
-                            <button id="low-btn">Low</button>
-                            <button id="medium-btn">Medium</button>
-                            <button id="high-btn">High</button>
+                            <input type="button" id="low-btn" value="Low" data-value="Low">
+                            <input type="button" id="medium-btn" value="Medium" data-value="Medium">
+                            <input type="button" id="high-btn" value="High" data-value="High">
                         </div>    
-                    </div>
-
-                    <div class="card-form" id="remind-time-container">
                         <h2>Remind me:</h2>
                         <div id="remind-time">
-
+                            <label for="time" class="task-form-label">Time:</label>
+                            <input type="time" class="form-control" id="time" required>
+                            <label class="task-form-label" for="date-input">Date</label>
+                            <input type="date" class="form-control" id="date-input" value=""/>
                         </div>
-                    </div>
-
-                    <div class="card-form" id="reminder-card">
-                        <h2>Reminder:</h2>
-                        <form>
-                            <textarea name="reminder" id="reminder"></textarea>
-                        </form>
-                    </div>
+                        <div id="description-card">
+                            <h2>Description:</h2>
+                            <form>
+                                <textarea name="reminder" id="reminder"></textarea>
+                            </form>
+                            <button id="add-form-btn" type="submit">ADD</button>
+                        </div>
+                    </form>
                 </div>
+
+                <button id="add-button" type="button">Add +</button>
     </div>
+    <!-- <dialog id="confirm-close-dialog">
+        <form method="dialog">
+          <p class="discard-message-text">Discard unsaved changes?</p>
+          <div class="confirm-close-dialog-btn-container">
+            <button id="cancel-btn" class="btn">
+              Cancel
+            </button>
+            <button id="discard-btn" class="btn">
+              Discard
+            </button>
+          </div>
+        </form>
+      </dialog> -->
 </body>
 </html>
