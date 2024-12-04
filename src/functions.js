@@ -1,5 +1,5 @@
 import { da } from "date-fns/locale";
-import { displayForm, date, priorityButtons, time, reminder} from "./dom-elements";
+import { displayForm, date, priorityButtons, time, reminder, addFormButton} from "./dom-elements";
 
 const taskData = [];
 let currentTask = {};
@@ -7,10 +7,19 @@ let selectPriority = null;
 const today = new Date().toISOString().split('T')[0];
 date.value = today;
 
+export const closeForm = (event) => {
+    const button = event.target;
+    if (button.matches("#close-task-form-btn")) {
+        event.preventDefault();
+        reset();
+    }
+}
+
 export const updateTaskContainer = () => {
     content.innerHTML = "";
 
     taskData.forEach(({id, priority, time, date, description}) => {    
+        console.log("Updating DOM with Task ID:", id); // Debug log
         let daytime;
         if (time < "12:00") {
             daytime = "Morning";
@@ -29,16 +38,12 @@ export const updateTaskContainer = () => {
                         <p id="date-content">${date}</p>
                         <p id="time-content">${time}</p>
                         </div>
-                        <button id="delete-btn" class="close-task-form-btn" type="button" aria-label="close">X</button>
-                        <input type="image" src="./icons/edit.svg" class="edit-btn" aria-label="edit" alt="edit button">
+                        <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button">
+                        <input type="image" src="./icons/edit.svg" class="edit-btn" alt="edit button">
                     </div>`
     });
-
-    //Create new delete button for new task
-    const deleteButtons = document.querySelectorAll("#delete-btn");
-    deleteButtons.forEach((button) => {
-        button.addEventListener("click", () => deleteTask(button));
-    });
+  
+      console.log("Updated DOM with Task Data:", taskData); // Debug log
 }
 
 export const addOrUpdateTask = () => {
@@ -62,8 +67,10 @@ export const addOrUpdateTask = () => {
        
         if (dataArrIndex === -1) {
             taskData.unshift(taskObj); //add a new task
+        } else {
+            taskData[dataArrIndex] = taskObj;
         }
-    
+        console.log("Updated Task Data:", taskData); // Debug log
  
     updateTaskContainer();
     reset();
@@ -89,8 +96,21 @@ export const reset = () => {
 }
 
 const findDataArrIndex = (button) => {
-    return taskData.findIndex((item) => item.id === button.parentElement.id);
-}
+    const card = button.closest(".reminder-card");
+    if (!card) {
+        console.error("Reminder card not found for the clicked button.");
+        return -1;
+    }
+
+    const cardId = card.id;
+    console.log("Found Card ID:", cardId);
+
+    const index = taskData.findIndex((item) => item.id === cardId);
+    if (index === -1) {
+        console.error(`Task with ID ${cardId} not found in taskData.`, taskData); // Debug log
+    }
+    return index;
+};
 
 export const deleteTask = (button) => {
     const dataArrIndex = findDataArrIndex(button);
@@ -100,14 +120,20 @@ export const deleteTask = (button) => {
 }
 
 export const editTask = (button) => {
-    const taskId = button.parentElement.id;
-    const taskIndex = taskData.findIndex((item) => item.id === taskId);
+    const dataArrIndex = findDataArrIndex(button);
 
-    currentTask = taskData[taskIndex];
+    if (dataArrIndex === -1) {
+        console.error("Task not found. Cannot edit.");
+        return; // Stop execution if no task is found
+    }
 
-    time.value = currentTask.time;
-    date.value = currentTask.date;
-    reminder.value = currentTask.description;
+    currentTask = taskData[dataArrIndex];
+    console.log("Editing Task:", currentTask); // Debug log
+
+     // Update the form fields with the current task's data
+     time.value = currentTask.time || "";
+     date.value = currentTask.date || "";
+     reminder.value = currentTask.description || "";
 
     priorityButtons.forEach((button) => {
         if (button.getAttribute("data-value") === currentTask.priority) {
@@ -118,7 +144,6 @@ export const editTask = (button) => {
         }
     });
 
-    displayForm.classList.toggle("hidden");
-
-    console.log("Editing task with ID:", taskId);
+    displayForm.classList.remove("hidden");
+    addFormButton.innerHTML = "Update";
 }

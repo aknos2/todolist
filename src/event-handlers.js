@@ -1,5 +1,5 @@
-import { cardForm, displayForm, content, closeTaskFormBtn, confirmCloseDialog, addButton, reminderCard, priorityButtons, deleteBtn, editButtons, deleteButtons} from './dom-elements.js';
-import { reset, addOrUpdateTask, updateTaskContainer, addPriority, removePriority, deleteTask, editTask} from './functions.js';
+import { cardForm, displayForm, content, closeTaskFormBtn, confirmCloseDialog, addButton, reminderCard, priorityButtons} from './dom-elements.js';
+import { reset, addOrUpdateTask, updateTaskContainer, addPriority, removePriority, deleteTask, editTask, closeFormFunction, closeForm} from './functions.js';
 
 
 export const openForm = () => {
@@ -20,12 +20,20 @@ priorityButtons.forEach((button) => {
     });
 });
 
-deleteButtons.forEach((button) => {
-    button.addEventListener("click", () => deleteTask(button));
-});
+document.addEventListener("click", closeForm);
 
-editButtons.forEach((button) => {
-    button.addEventListener("click", () =>  editTask(button));
+content.addEventListener("click", (event) => {
+    const button = event.target;
+
+    // Check if the clicked element is a delete button
+    if (button.matches("#delete-btn")) {
+        deleteTask(button);
+    }
+
+    // Check if the clicked element is an edit button
+    if (button.matches(".edit-btn")) {
+        editTask(button);
+    }
 });
 
 

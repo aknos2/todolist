@@ -1,7 +1,5 @@
 export const confirmCloseDialog = document.getElementById("confirm-close-dialog");
-export const closeTaskFormBtn = document.getElementById("close-task-form-btn");
-//export const cancelBtn = document.getElementById("cancel-btn");
-//export const discardBtn = document.getElementById("discard-btn");
+export const closeTaskFormBtn = document.getElementById("#close-icon");
 export const cardForm = document.querySelector("#card-form");
 export const displayForm = document.querySelector("#add-card-form");
 export const addButton = document.querySelector("#add-button");
@@ -13,3 +11,4 @@ export const content = document.querySelector("#content");
 export const deleteButtons = document.querySelectorAll("#delete-btn");
 export const reminderCard = document.querySelector(".reminder-card");
 export const editButtons = document.querySelectorAll(".edit-btn");
+export const addFormButton = document.querySelector("#add-form-btn");
