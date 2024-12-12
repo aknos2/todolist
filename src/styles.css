@@ -7,8 +7,8 @@
 body {
     margin: 0;
     padding: 0;
-    height: 100%;
     font-size: 1.5rem;
+    height: 100%;
 }
 
 li {
@@ -44,7 +44,7 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     grid-column: 2/ -1;
 }
 
-.cards {
+.side-menu-cards {
     width: 250px;
     height: 150px;
     border-radius: 10px;
@@ -54,27 +54,23 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     padding-top: 30px;
 }
 
-#main {
-    justify-items: center;
-    text-align: center;
-    padding: 20px;
-}
-
 #main-title {
-    text-align: center;
+    float: left;
+    margin-left: 30px;
 }
 
 #content {
     display: grid;
-    grid-template-columns: repeat(3, minmax(350px, 450px));
-    gap: 20px;
+    grid-template-rows: 1fr;
+    width: 100%;
+    gap: 10px;
 }
 
 #time-date-container {
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    gap: 30px;
+    justify-content:flex-start;
+    gap: 10px;
 }
 
 #date-content, #time-content {
@@ -97,10 +93,16 @@ button:hover, input[type=button]:hover, .close-icon:hover {
 
 .card-form {
     background-color: rgb(225, 205, 30);
-    max-width: 600px;
+    width: 600px;
     height: 370px;
     padding: 10px;
     border-radius: 5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid black;
+    z-index: 10;
 }
 
 .close-icon {
@@ -135,21 +137,30 @@ input[type="button"].selected {
     gap: 20px;
 }
 
-
 .reminder-card {
     border: none;
     background: rgb(239, 197, 72);
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding: 30px;
     position: relative;
     transition: box-shadow 0.3s ease-in-out;
-
+    text-align: left;
 }
 
 .reminder-card p, h2 {
     margin: 0; /* Removes the default margin from <p> elements */
+}
+
+#reminder-card-upper-description {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
+
+#reminder-card-description {
+    padding: 10px;
 }
 
 #delete-btn {
@@ -158,10 +169,16 @@ input[type="button"].selected {
     top: 5%;
     opacity: 0.7;
     display: none;
+    width: 60px;
+    height: 60px;
 }
 
 .reminder-card:hover #delete-btn {
     display: block; 
+}
+
+.reminder-card:hover {
+    opacity: 0.9;
 }
 
 #delete-btn:hover {
@@ -169,11 +186,8 @@ input[type="button"].selected {
 }
 
 .edit-btn {
-    width: 30px;
-    height: 30px;
-    position: absolute;
-    left: 10px;
-    bottom: 10px; 
+    width: 40px;
+    height: 40px;
 }
 
 .edit-btn:hover {
@@ -209,20 +223,29 @@ input[type=time], input[type=date] {
     width: 100%;
     background-color: rgb(225, 205, 30);
     height: auto;
-    min-height: 330px;
+    min-height: 310px;
     border-radius: 10px;
-    box-sizing: border-box;
 }
 
 #add-form-btn {
     float: right;
-    margin-top: 20px;
+    margin-top: 30px;
     margin-right: 70px;
     font-size: 1.4em;
 }
 
 .hidden {
     display: none;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 9; /* Ensure it's above the background but below the form */
 }
 
 .task-form-header {
@@ -247,21 +270,46 @@ input[type=time], input[type=date] {
     cursor: pointer;
 }
 
+#scheduled-container p {
+    margin-left: 50px;
+}
 
-/*#confirm-close-dialog {
-    padding: 10px;
-    border-radius: 15px;
-    position: absolute;
-    left: 40%;
-    z-index: 9;
+#tasks-count {
+    margin-left: 20px;
 }
-.confirm-close-dialog-btn-container {
+
+h4 {
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+#today-reminders-list {
     display: flex;
-    justify-content: center;
-    margin-top: 10px;
+    flex-direction: column;
+    font-size: 0.9em;
+    padding-bottom: 20px;
 }
-.discard-message-text {
-    font-weight: bold;
-    font-size: 1.5rem;
+
+.today-reminder {
+    display: grid;
+    grid-template-columns: 300px 380px;
+    grid-template-rows: 30px 30px;
+    margin-bottom: 30px;
+    height: 100px;
+    background-color: #d9ede5;
 }
-*/
+
+#completed-list-container {
+    display: flex;
+    flex-direction: row;
+}
+
+#completed-list-container button {
+    font-size: 20px;
+    color: rgb(223, 31, 31);
+    height: 100%;
+    align-self: center;
+    margin-left: 10px; 
+    
+}
+

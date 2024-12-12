@@ -1,14 +1,15 @@
-import { cardForm, displayForm, content, closeTaskFormBtn, confirmCloseDialog, addButton, reminderCard, priorityButtons} from './dom-elements.js';
-import { reset, addOrUpdateTask, updateTaskContainer, addPriority, removePriority, deleteTask, editTask, closeFormFunction, closeForm} from './functions.js';
-
+import { cardForm, displayForm, content, addButton, priorityButtons, todayBtn, allTasksBtn, scheduledBtn} from './dom-elements.js';
+import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks} from './functions.js';
 
 export const openForm = () => {
     addButton.addEventListener("click", () => {
+        resetForm();
         displayForm.classList.toggle("hidden");
+        overlay.style.display = "block";
     });
 };
 
-cardForm.addEventListener("submit", e => {
+displayForm.addEventListener("submit", e => {
     e.preventDefault();
     addOrUpdateTask();
 });
@@ -34,7 +35,25 @@ content.addEventListener("click", (event) => {
     if (button.matches(".edit-btn")) {
         editTask(button);
     }
+
+    //show button function for completed tasks
+    if (button.matches("#show-completed-btn")) {
+        const completedListContent = document.getElementById("completed-list-content");
+        completedListContent.classList.toggle("hidden");
+        const showCompletedBtn = event.target;
+
+        if (completedListContent.classList.contains("hidden")) {
+            showCompletedBtn.innerHTML = "Show";
+        } else {
+            showCompletedBtn.innerHTML = "Hide";
+        }
+    }
 });
+
+todayBtn.addEventListener("click", displayTodayAddedTasks);
+scheduledBtn.addEventListener("click", displayScheduledTasks);
+allTasksBtn.addEventListener("click", displayAllTasks);
+
 
 
 

@@ -12,51 +12,16 @@
                 <button id="searchbar-btn" type="submit"></button>
                 <input id="searchbar" name="search" type="search" placeholder="Search">
             </form>
-            <button class="cards" id="today-btn"><li>Today</li></button>
-            <button class="cards" id="scheduled-btn"><li>Scheduled</li></button>
-            <button class="cards" id="all-btn"><li>All</li></button>
+            <button class="side-menu-cards" id="today-btn"><li>Today</li></button>
+            <button class="side-menu-cards" id="scheduled-btn"><li>Scheduled</li></button>
+            <button class="side-menu-cards" id="all-btn"><li>All</li></button>
         </div>
         <div id="main">
-            <div id="main-title"><h1>test</h1></div>
-                <div id="content">
-                    <div class="reminder-card" id="unique-task-id">                    
-                        <h2>Morning</h2>
-                        <p id="description">Do the dishes</p>
-                        <p id="priority-text"><strong>Priority:</strong> High</p>
-                        <div id="time-date-container">
-                            <p id="date-content">12-01-24</p>
-                            <p id="time-content">17:00</p>
-                        </div>
-                        <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button">
-                        <input type="image" src="./icons/edit.svg" class="edit-btn" aria-label="edit" alt="edit button">
-                        </div>
-                    <div class="reminder-card">                    
-                        <h2>Morning</h2>
-                        <p>Do the dishes</p>
-                        <p><strong>Priority:</strong> High</p>
-                        <div id="time-date-container">
-                            <p id="date-content">12-01-24</p>
-                            <p id="time-content">17:00</p>
-                        </div>
-                        <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button">
-                        <input type="image" src="./icons/edit.svg" class="edit-btn" aria-label="edit" alt="edit button">
-                    </div>
-                    <div class="reminder-card">                    
-                        <h2>Morning</h2>
-                        <p>Do the dishes</p>
-                        <p><strong>Priority:</strong> High</p>
-                        <div id="time-date-container">
-                            <p id="date-content">12-01-24</p>
-                            <p id="time-content">17:00</p>
-                        </div>
-                        <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button">
-                        <input type="image" src="./icons/edit.svg" class="edit-btn" aria-label="edit" alt="edit button">
-                    </div>
-                </div>
+            <div id="main-title-container"><h1 id="main-title">All</h1></div>
+                <div id="content"></div>
 
-
-                <div id="add-card-form" class="hidden">
-                    <form class="card-form" id="card-form">
+                    <div id="overlay" class="hidden"></div>
+                    <form class="card-form hidden" id="card-form">
 
                         <div class="task-form-header">
                             <button id="close-task-form-btn" class="close-task-form-btn"  id="close-icon" type="button" aria-label="close"></button>
@@ -64,9 +29,9 @@
                 
                         <h2>Priority</h2>
                         <div id="priority">
-                            <input type="button" id="low-btn" value="Low" data-value="Low">
-                            <input type="button" id="medium-btn" value="Medium" data-value="Medium">
-                            <input type="button" id="high-btn" value="High" data-value="High">
+                            <input type="button" id="low-btn" value="Low" data-value="Low" required>
+                            <input type="button" id="medium-btn" value="Medium" data-value="Medium" required>
+                            <input type="button" id="high-btn" value="High" data-value="High" required>
                         </div>    
                         <h2>Remind me:</h2>
                         <div id="remind-time">
@@ -80,25 +45,12 @@
                             <form>
                                 <textarea name="reminder" id="reminder"></textarea>
                             </form>
-                            <button id="add-form-btn" type="submit">ADD</button>
+                            <button id="add-form-btn" type="submit">Add reminder</button>
                         </div>
                     </form>
-                </div>
+                
 
                 <button id="add-button" type="button">Add +</button>
     </div>
-    <!-- <dialog id="confirm-close-dialog">
-        <form method="dialog">
-          <p class="discard-message-text">Discard unsaved changes?</p>
-          <div class="confirm-close-dialog-btn-container">
-            <button id="cancel-btn" class="btn">
-              Cancel
-            </button>
-            <button id="discard-btn" class="btn">
-              Discard
-            </button>
-          </div>
-        </form>
-      </dialog> -->
 </body>
 </html>

@@ -1,79 +1,95 @@
 import { da } from "date-fns/locale";
-import { displayForm, date, priorityButtons, time, reminder, addFormButton} from "./dom-elements";
+import { displayForm, date, priorityButtons, time, reminder, addFormButton, initialTaskList, mainTitle} from "./dom-elements";
 
-const taskData = [];
+const taskData = JSON.parse(localStorage.getItem("data")) || [];
 let currentTask = {};
-let selectPriority = null;
+let completedReminders = [];
+let daytime;
+const DEFAULT_PRIORITY = "Medium";
+let selectPriority = DEFAULT_PRIORITY;
 const today = new Date().toISOString().split('T')[0];
+let currentMainTitle = "All";
 date.value = today;
 
 export const closeForm = (event) => {
     const button = event.target;
     if (button.matches("#close-task-form-btn")) {
         event.preventDefault();
-        reset();
+        resetForm();
+        overlay.style.display = "none";
     }
 }
 
-export const updateTaskContainer = () => {
+const getDaytime = (time) => {
+    if (time < "12:00") {
+        return "Morning";
+    } else if (time < "18:00") {
+        return "Afternoon";
+    } else {
+        return "Evening";
+    }
+};
+
+
+export const updateTaskContainer = (tasks = taskData) => {
     content.innerHTML = "";
 
-    taskData.forEach(({id, priority, time, date, description}) => {    
+    tasks.forEach(({id, priority, time, date, description}) => {    
         console.log("Updating DOM with Task ID:", id); // Debug log
-        let daytime;
-        if (time < "12:00") {
-            daytime = "Morning";
-        } else if (time < "18:00") {
-            daytime = "Afternoon";
-        } else {
-            daytime = "Evening";
-        }
         
         content.innerHTML += `
-                    <div class="reminder-card" id="${id}">                    
-                        <h2>${daytime}</h2>
-                        <p>${description}</p>
-                        <p><strong>Priority: </strong>${priority}</p>
+                    <div class="reminder-card" id="${id}">         
+                        <div id="reminder-card-upper-description">           
+                            <h2>${getDaytime(time)}</h2>
+                            <p id="reminder-card-description">${description}</p>
+                            <p><strong>Priority: </strong>${priority}</p>
+                        </div>    
                         <div id="time-date-container">
                         <p id="date-content">${date}</p>
                         <p id="time-content">${time}</p>
+                        <input type="image" src="./icons/edit.svg" class="edit-btn" alt="edit button">
                         </div>
                         <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button">
-                        <input type="image" src="./icons/edit.svg" class="edit-btn" alt="edit button">
                     </div>`
     });
   
       console.log("Updated DOM with Task Data:", taskData); // Debug log
 }
 
-export const addOrUpdateTask = () => {
-    let daytime;
-
-    if(!selectPriority) {
-        console.error("Please select a priority.");
-        return;
+const validateInput = () => {
+    if (!reminder.value.trim() && reminder.value.length !== 0) {
+        alert("Only space inputs are not valid");
+        return false;
     }
+    return true;
+}
+
+const createTaskObject = () => ({
+    id: `${removeSpecialChars(reminder.value).toLowerCase().split(" ").join("-")}-${Date.now()}`,
+    priority: selectPriority,
+    time: time.value,
+    date: date.value,
+    description: removeSpecialChars(reminder.value) || "No description",
+    daytime: daytime
+})
+
+export const addOrUpdateTask = () => {
+    if (!validateInput()) return;
+
+    const dataArrIndex = taskData.findIndex((item) => item.id === currentTask.id);
+    const taskObj = createTaskObject();
     
-        const dataArrIndex = taskData.findIndex((item) => item.id === currentTask.id);
+    if (dataArrIndex === -1) {
+        taskData.unshift(taskObj); //add a new task
+    } else {
+        taskData[dataArrIndex] = taskObj;
+    }
+    console.log("Updated Task Data:", taskData); // Debug log
+
     
-        const taskObj = {
-            id: `${reminder.value.toLowerCase().split(" ").join("-")}-${Date.now()}`,
-            priority: selectPriority,
-            time: time.value,
-            date: date.value,
-            description: reminder.value,
-            daytime: daytime
-        }
-       
-        if (dataArrIndex === -1) {
-            taskData.unshift(taskObj); //add a new task
-        } else {
-            taskData[dataArrIndex] = taskObj;
-        }
-        console.log("Updated Task Data:", taskData); // Debug log
- 
+    saveData();
     updateTaskContainer();
-    reset();
+    resetForm();
 }
 
 export const addPriority = (button) => {
@@ -85,15 +101,30 @@ export const removePriority = (btn) => {
     btn.classList.remove("selected");
 }
 
-export const reset = () => {
+export const resetForm = () => {
     time.value = ""; 
     date.value = "";
     reminder.value = "";
-    priorityButtons.forEach(btn => btn.classList.remove("selected"));
+    selectPriority = DEFAULT_PRIORITY;
     date.value = today;
 
-    displayForm.classList.toggle("hidden");
+    priorityButtons.forEach((btn) => {
+        if (btn.getAttribute("data-value") === DEFAULT_PRIORITY) {
+            btn.classList.add("selected");
+        } else {
+            btn.classList.remove("selected");
+        };
+        });
+
+    overlay.style.display = "none";
+    displayForm.classList.add("hidden");
+    addFormButton.innerHTML = "Add reminder";
+    mainTitle.innerHTML = "";
 }
+
+if (taskData.length) {
+    updateTaskContainer();
+  }
 
 const findDataArrIndex = (button) => {
     const card = button.closest(".reminder-card");
@@ -117,6 +148,7 @@ export const deleteTask = (button) => {
 
     button.parentElement.remove();
     taskData.splice(dataArrIndex, 1);
+    localStorage.setItem("data", stringifyData(taskData));
 }
 
 export const editTask = (button) => {
@@ -144,6 +176,121 @@ export const editTask = (button) => {
         }
     });
 
-    displayForm.classList.remove("hidden");
+    overlay.style.display = "block";
+    displayForm.classList.toggle("hidden");
     addFormButton.innerHTML = "Update";
+}
+
+export const initialTasks = () => {
+    if (taskData.length === 0) {
+        initialTaskList.forEach((task) => {
+            // Set form values temporarily
+            reminder.value = task.description;
+            time.value = task.time;
+            date.value = task.date;
+            selectPriority = task.priority;
+    
+            // Call the function to add the task
+            addOrUpdateTask();
+        });
+    }
+};
+
+export const displayTodayAddedTasks = () => {
+    const todayTasks = taskData.filter((task) => task.date === today);
+    updateTaskContainer(todayTasks);
+    currentMainTitle = "today";
+    mainTitleField();
+}
+
+export const displayAllTasks = () => {
+    updateTaskContainer(taskData);
+    currentMainTitle = "all";
+    mainTitleField();
+}
+
+export const displayScheduledTasks = () => {
+    content.innerHTML = "";
+
+
+    content.innerHTML += `
+                <div id="scheduled-container">
+                    <div id="tasks-count"><strong>${taskData.length}</strong> total reminders</div>
+                    <hr>
+                    <h4>Today reminders</h4>
+                    <div id="today-reminders-list">
+                        ${todayScheduledTasks()}
+                    </div>
+                    <hr>
+                    <h4>Future reminders</h4>
+                    <div id="others-reminders-list">
+                        ${futureScheduledTasks()}
+                    </div>
+                    <hr>
+                    <div id="completed-list-container">
+                    <p>Completed</p> <button id="show-completed-btn">Show</button>
+                    </div>
+                    <div id="completed-list-content" class="hidden">
+                        ${completedTasks()}
+                    </div>
+                </div>`
+}   
+
+const todayScheduledTasks = () => {
+    const todayTasks = taskData.filter((task) => task.date === today);
+
+    return todayTasks.map((task) => `
+                <div class="today-reminder">
+                    <p>${task.priority} priority</p>
+                    <p>${task.date} - ${task.time}</p>
+                    <p>${getDaytime(time)}</p>
+                    <p>${task.description}</p>
+                </div>
+    `).join("");
+}
+
+const futureScheduledTasks = () => {
+    const futureTasks = taskData.filter((task) => task.date > today);
+
+    return futureTasks.map((task) => `
+                <div class="today-reminder">
+                    <p>${task.priority} priority</p>
+                    <p>${task.date} - ${task.time}</p>
+                    <p>${getDaytime(time)}</p>
+                    <p>${task.description}</p>
+                </div>
+    `).join("");
+}
+
+const completedTasks = () => {
+    const completedTasks = taskData.filter((task) => task.date < today);
+
+    return completedTasks.map((task) => `
+                <div class="today-reminder">
+                    <p>${task.priority} priority</p>
+                    <p>${task.date} - ${task.time}</p>
+                    <p>${getDaytime(time)}</p>
+                    <p>${task.description}</p>
+                </div>
+    `).join("");
+}
+
+const mainTitleField = () => {
+    if (currentMainTitle === "today") {
+        mainTitle.innerHTML = "Today";
+    } else if (currentMainTitle === "all") {
+        mainTitle.innerHTML = "All";
+    }
+}
+
+const stringifyData = (data) => {
+    return JSON.stringify(data);
+}
+
+const saveData = () => {
+    localStorage.setItem("data", stringifyData(taskData));
+}
+
+const removeSpecialChars = (val) => {
+    return val.trim().replace(/[^A-Za-z0-9\-\s]/g, '')
 }
