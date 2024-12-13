@@ -1,9 +1,9 @@
-import { da } from "date-fns/locale";
+import { da, ta } from "date-fns/locale";
 import { displayForm, date, priorityButtons, time, reminder, addFormButton, initialTaskList, mainTitle} from "./dom-elements";
 
 const taskData = JSON.parse(localStorage.getItem("data")) || [];
 let currentTask = {};
-let completedReminders = [];
+let completedReminders = JSON.parse(localStorage.getItem("completed")) || [];
 let daytime;
 const DEFAULT_PRIORITY = "Medium";
 let selectPriority = DEFAULT_PRIORITY;
@@ -52,8 +52,8 @@ export const updateTaskContainer = (tasks = taskData) => {
                         <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button">
                     </div>`
     });
-  
-      console.log("Updated DOM with Task Data:", taskData); // Debug log
+    
+    console.log("Updated DOM with Task Data:", taskData); // Debug log
 }
 
 const validateInput = () => {
@@ -87,9 +87,14 @@ export const addOrUpdateTask = () => {
     console.log("Updated Task Data:", taskData); // Debug log
 
     
-    saveData();
-    updateTaskContainer();
+    saveData("data", taskData);
+    saveData("complete", completedReminders);
+
+    const filteredTasks = getFilteredTasks("todayAndFuture"); // Only show today and future tasks
+    updateTaskContainer(filteredTasks);
     resetForm();
+    currentMainTitle = "last added";
+    mainTitleField();
 }
 
 export const addPriority = (button) => {
@@ -147,8 +152,12 @@ export const deleteTask = (button) => {
     const dataArrIndex = findDataArrIndex(button);
 
     button.parentElement.remove();
+
+    completedReminders.push(taskData[dataArrIndex]);
+    saveData("complete", completedReminders);
+
     taskData.splice(dataArrIndex, 1);
-    localStorage.setItem("data", stringifyData(taskData));
+    saveData("data", taskData);
 }
 
 export const editTask = (button) => {
@@ -197,25 +206,29 @@ export const initialTasks = () => {
 };
 
 export const displayTodayAddedTasks = () => {
-    const todayTasks = taskData.filter((task) => task.date === today);
+    const todayTasks = getFilteredTasks("today");
+
     updateTaskContainer(todayTasks);
     currentMainTitle = "today";
     mainTitleField();
 }
 
-export const displayAllTasks = () => {
-    updateTaskContainer(taskData);
-    currentMainTitle = "all";
+export const displayScheduledTasks = () => {    
+    const filteredTasks = getFilteredTasks("future");
+
+    updateTaskContainer(filteredTasks);
+    currentMainTitle = "scheduled";
     mainTitleField();
 }
 
-export const displayScheduledTasks = () => {
+export const displayAllTasks = () => {
     content.innerHTML = "";
 
 
     content.innerHTML += `
                 <div id="scheduled-container">
-                    <div id="tasks-count"><strong>${taskData.length}</strong> total reminders</div>
+                    <div id="tasks-count"><strong>${todayAndFutureTasksCount()}</strong> 
+                    total active ${todayAndFutureTasksCount() === 1 ? "reminder" : "reminders"}</div>
                     <hr>
                     <h4>Today reminders</h4>
                     <div id="today-reminders-list">
@@ -228,16 +241,20 @@ export const displayScheduledTasks = () => {
                     </div>
                     <hr>
                     <div id="completed-list-container">
-                    <p>Completed</p> <button id="show-completed-btn">Show</button>
+                    <p><strong>${completedReminders.length}</strong> Completed/Expired</p> 
+                    <button id="show-completed-btn">Show</button>
                     </div>
                     <div id="completed-list-content" class="hidden">
                         ${completedTasks()}
                     </div>
                 </div>`
+    
+    currentMainTitle = "all";
+    mainTitleField();
 }   
 
 const todayScheduledTasks = () => {
-    const todayTasks = taskData.filter((task) => task.date === today);
+    const todayTasks = getFilteredTasks("today");
 
     return todayTasks.map((task) => `
                 <div class="today-reminder">
@@ -250,7 +267,7 @@ const todayScheduledTasks = () => {
 }
 
 const futureScheduledTasks = () => {
-    const futureTasks = taskData.filter((task) => task.date > today);
+    const futureTasks = getFilteredTasks("future");
 
     return futureTasks.map((task) => `
                 <div class="today-reminder">
@@ -263,9 +280,13 @@ const futureScheduledTasks = () => {
 }
 
 const completedTasks = () => {
-    const completedTasks = taskData.filter((task) => task.date < today);
+    const completedReminders = getFilteredTasks("completed");
+    const previousDateTasks = taskData.filter(//get previous date tasks and also exclude duplicated from completed ones
+        (task) => task.date < today && !completedReminders.some((completedTasks) => completedTasks.id === task.id)) 
 
-    return completedTasks.map((task) => `
+    const allTasks = [...completedReminders, ...previousDateTasks];
+
+    return allTasks.map((task) => `
                 <div class="today-reminder">
                     <p>${task.priority} priority</p>
                     <p>${task.date} - ${task.time}</p>
@@ -275,20 +296,68 @@ const completedTasks = () => {
     `).join("");
 }
 
+export const deleteExpiredTasks = () => {
+    // Find all expired tasks
+    const previousDateTasks = getFilteredTasks("expired")
+
+    previousDateTasks.forEach((task) => {
+        const taskElement = document.getElementById(task.id);
+
+        if (taskElement) {
+            taskElement.remove();
+        }
+
+        // Add the task to the completed reminders (or handle as needed)
+        completedReminders.push(task);
+    });    
+   
+    // Remove expired tasks from taskData
+    taskData = getFilteredTasks("todayAndFuture")
+
+    saveData("complete", completedReminders);
+    saveData("data", taskData);
+};
+
+
 const mainTitleField = () => {
     if (currentMainTitle === "today") {
         mainTitle.innerHTML = "Today";
     } else if (currentMainTitle === "all") {
         mainTitle.innerHTML = "All";
+    } else if (currentMainTitle === "scheduled") {
+        mainTitle.innerHTML = "Scheduled";
+    } else if (currentMainTitle === "last added") {
+        mainTitle.innerHTML = "Last added"
     }
 }
+
+const todayAndFutureTasksCount = () => {
+    const filteredTasks = getFilteredTasks("todayAndFuture");
+    return filteredTasks.length;
+};
+
+const getFilteredTasks = (filterType) => {
+    if (filterType === "todayAndFuture") {
+        return taskData.filter((task) => task.date >= today);
+    } else if (filterType === "expired") {
+        return taskData.filter((task) => task.date < today);
+    } else if (filterType === "completed") {
+        return JSON.parse(localStorage.getItem("completedReminders")) || [];
+    } else if (filterType === "future") {
+        return taskData.filter((task) => task.date > today);
+    } else if (filterType === "today") {
+        return taskData.filter((task) => task.date === today);
+    }
+    return taskData; // Default: return all tasks
+};
+
 
 const stringifyData = (data) => {
     return JSON.stringify(data);
 }
 
-const saveData = () => {
-    localStorage.setItem("data", stringifyData(taskData));
+const saveData = (key, data) => {
+    localStorage.setItem(key, stringifyData(data));
 }
 
 const removeSpecialChars = (val) => {

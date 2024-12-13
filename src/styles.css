@@ -173,7 +173,7 @@ input[type="button"].selected {
     height: 60px;
 }
 
-.reminder-card:hover #delete-btn {
+.reminder-card:hover, .today-reminder:hover #delete-btn {
     display: block; 
 }
 

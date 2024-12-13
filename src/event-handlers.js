@@ -1,5 +1,10 @@
 import { cardForm, displayForm, content, addButton, priorityButtons, todayBtn, allTasksBtn, scheduledBtn} from './dom-elements.js';
-import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks} from './functions.js';
+import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, deleteExpiredTasks} from './functions.js';
+
+document.addEventListener("DOMContentLoaded", () => {
+    deleteExpiredTasks();
+    updateTaskContainer(); // Ensure the DOM reflects the updated tasks
+});
 
 export const openForm = () => {
     addButton.addEventListener("click", () => {
