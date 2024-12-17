@@ -55,6 +55,7 @@ content.addEventListener("click", (event) => {
     }
 });
 
+
 todayBtn.addEventListener("click", displayTodayAddedTasks);
 scheduledBtn.addEventListener("click", displayScheduledTasks);
 allTasksBtn.addEventListener("click", displayAllTasks);

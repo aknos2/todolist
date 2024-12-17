@@ -173,7 +173,7 @@ input[type="button"].selected {
     height: 60px;
 }
 
-.reminder-card:hover, .today-reminder:hover #delete-btn {
+.reminder-card:hover #delete-btn {
     display: block; 
 }
 
@@ -292,11 +292,25 @@ h4 {
 
 .today-reminder {
     display: grid;
-    grid-template-columns: 300px 380px;
+    grid-template-columns: 300px 280px 100px;
     grid-template-rows: 30px 30px;
     margin-bottom: 30px;
     height: 100px;
     background-color: #d9ede5;
+}
+
+#all-menu-delete-btn {
+    width: 30px;
+    height: 30px;
+    visibility: hidden;
+}
+
+.today-reminder:hover #all-menu-delete-btn {
+    visibility: visible;
+}
+
+.today-reminder:hover {
+    opacity: 0.9;
 }
 
 #completed-list-container {

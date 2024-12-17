@@ -154,7 +154,7 @@ export const deleteTask = (button) => {
     button.parentElement.remove();
 
     completedReminders.push(taskData[dataArrIndex]);
-    saveData("complete", completedReminders);
+    saveData("completed", completedReminders);
 
     taskData.splice(dataArrIndex, 1);
     saveData("data", taskData);
@@ -253,30 +253,26 @@ export const displayAllTasks = () => {
     mainTitleField();
 }   
 
+const renderTaskTemplate = (task) => `
+    <div class="today-reminder">
+        <p>${task.priority} priority</p>
+        <p>${task.date} - ${task.time}</p>
+        <p>${getDaytime(task.time)}</p>
+        <p>${task.description}</p>
+        <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button" data-task-id="${task.id}">
+    </div>
+`;
+
 const todayScheduledTasks = () => {
     const todayTasks = getFilteredTasks("today");
 
-    return todayTasks.map((task) => `
-                <div class="today-reminder">
-                    <p>${task.priority} priority</p>
-                    <p>${task.date} - ${task.time}</p>
-                    <p>${getDaytime(time)}</p>
-                    <p>${task.description}</p>
-                </div>
-    `).join("");
+    return todayTasks.map(renderTaskTemplate).join("");
 }
 
 const futureScheduledTasks = () => {
     const futureTasks = getFilteredTasks("future");
 
-    return futureTasks.map((task) => `
-                <div class="today-reminder">
-                    <p>${task.priority} priority</p>
-                    <p>${task.date} - ${task.time}</p>
-                    <p>${getDaytime(time)}</p>
-                    <p>${task.description}</p>
-                </div>
-    `).join("");
+    return futureTasks.map(renderTaskTemplate).join("");
 }
 
 const completedTasks = () => {
@@ -286,14 +282,7 @@ const completedTasks = () => {
 
     const allTasks = [...completedReminders, ...previousDateTasks];
 
-    return allTasks.map((task) => `
-                <div class="today-reminder">
-                    <p>${task.priority} priority</p>
-                    <p>${task.date} - ${task.time}</p>
-                    <p>${getDaytime(time)}</p>
-                    <p>${task.description}</p>
-                </div>
-    `).join("");
+    return allTasks.map(renderTaskTemplate).join("");
 }
 
 export const deleteExpiredTasks = () => {
@@ -342,7 +331,7 @@ const getFilteredTasks = (filterType) => {
     } else if (filterType === "expired") {
         return taskData.filter((task) => task.date < today);
     } else if (filterType === "completed") {
-        return JSON.parse(localStorage.getItem("completedReminders")) || [];
+        return JSON.parse(localStorage.getItem("completed")) || [];
     } else if (filterType === "future") {
         return taskData.filter((task) => task.date > today);
     } else if (filterType === "today") {
