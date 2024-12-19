@@ -13,6 +13,8 @@ export const todayBtn = document.querySelector("#today-btn");
 export const allTasksBtn = document.querySelector("#all-btn");
 export const mainTitle = document.querySelector("#main-title");
 export const scheduledBtn = document.querySelector("#scheduled-btn");
+export const completeTasksDeleteBtn = document.querySelector(".close-task-btn");
+export const searchbar = document.querySelector("#searchbar");
 
 export const initialTaskList = [
     {

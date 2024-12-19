@@ -37,7 +37,7 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     flex-direction: column;
     flex-wrap: wrap;
     align-items: center;
-    gap: 80px;
+    gap: 40px;
 }
 
 #main-content {
@@ -51,7 +51,20 @@ button:hover, input[type=button]:hover, .close-icon:hover {
 }
 
 #search-calendar-form {
-    padding-top: 30px;
+    padding-top: 40px;
+    display: flex;
+}
+
+#searchbar {
+    height: 30px;
+    font-size: 0.7em;
+}
+
+#searchbar-icon {
+    height: 30px;
+    width: 30px;
+    background: rgb(181, 224, 190) url("./icons/magnify.svg");
+    border: 1px solid black;
 }
 
 #main-title {
@@ -324,6 +337,19 @@ h4 {
     height: 100%;
     align-self: center;
     margin-left: 10px; 
-    
 }
 
+.completed-reminder {
+    display: grid;
+    grid-template-columns: 300px 280px;
+    grid-template-rows: 30px 30px;
+    margin-bottom: 30px;
+    height: 100px;
+    background-color: #d9ede5;
+    font-size: 0.9em;
+}
+
+.expired-task {
+    opacity: 0.7;
+    pointer-events: none; /* Prevent interactions */
+}

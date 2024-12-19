@@ -1,8 +1,8 @@
-import { cardForm, displayForm, content, addButton, priorityButtons, todayBtn, allTasksBtn, scheduledBtn} from './dom-elements.js';
-import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, deleteExpiredTasks} from './functions.js';
+import { cardForm, displayForm, content, addButton, priorityButtons, todayBtn, allTasksBtn, scheduledBtn, searchbar} from './dom-elements.js';
+import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, transferExpiredTasks, clearCompletedTasks, searchbarFunction, displaySearchResults, updateCompletedTaskCount, updateCompletedTaskList, displayCompletedTaskCount} from './functions.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-    deleteExpiredTasks();
+    transferExpiredTasks();
     updateTaskContainer(); // Ensure the DOM reflects the updated tasks
 });
 
@@ -26,13 +26,14 @@ priorityButtons.forEach((button) => {
     });
 });
 
+
 document.addEventListener("click", closeForm);
 
 content.addEventListener("click", (event) => {
     const button = event.target;
 
     // Check if the clicked element is a delete button
-    if (button.matches("#delete-btn")) {
+    if (button.matches("#delete-btn") || button.matches("#all-menu-delete-btn")) {
         deleteTask(button);
     }
 
@@ -53,13 +54,17 @@ content.addEventListener("click", (event) => {
             showCompletedBtn.innerHTML = "Hide";
         }
     }
+
+    if (button.matches("#clear-btn")) {
+        clearCompletedTasks();
+    }
 });
 
 
 todayBtn.addEventListener("click", displayTodayAddedTasks);
 scheduledBtn.addEventListener("click", displayScheduledTasks);
 allTasksBtn.addEventListener("click", displayAllTasks);
-
+searchbar.addEventListener("input", displaySearchResults);
 
 
 

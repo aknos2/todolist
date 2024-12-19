@@ -1,5 +1,5 @@
 import { da, ta } from "date-fns/locale";
-import { displayForm, date, priorityButtons, time, reminder, addFormButton, initialTaskList, mainTitle} from "./dom-elements";
+import { displayForm, date, priorityButtons, time, reminder, addFormButton, initialTaskList, mainTitle, searchbar} from "./dom-elements";
 
 const taskData = JSON.parse(localStorage.getItem("data")) || [];
 let currentTask = {};
@@ -35,10 +35,10 @@ export const updateTaskContainer = (tasks = taskData) => {
     content.innerHTML = "";
 
     tasks.forEach(({id, priority, time, date, description}) => {    
-        console.log("Updating DOM with Task ID:", id); // Debug log
+        const isExpired = date < today;
         
         content.innerHTML += `
-                    <div class="reminder-card" id="${id}">         
+                    <div class="reminder-card ${isExpired ? "expired-task" : ""}" id="${id}">         
                         <div id="reminder-card-upper-description">           
                             <h2>${getDaytime(time)}</h2>
                             <p id="reminder-card-description">${description}</p>
@@ -47,12 +47,12 @@ export const updateTaskContainer = (tasks = taskData) => {
                         <div id="time-date-container">
                         <p id="date-content">${date}</p>
                         <p id="time-content">${time}</p>
-                        <input type="image" src="./icons/edit.svg" class="edit-btn" alt="edit button">
+                        ${!isExpired ? `<input type="image" src="./icons/edit.svg" class="edit-btn container-btn" alt="edit button">` : ""}
                         </div>
-                        <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button">
+                        ${!isExpired ? `<input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn container-btn" alt="close button">` : ""}
                     </div>`
     });
-    
+
     console.log("Updated DOM with Task Data:", taskData); // Debug log
 }
 
@@ -90,11 +90,9 @@ export const addOrUpdateTask = () => {
     saveData("data", taskData);
     saveData("complete", completedReminders);
 
-    const filteredTasks = getFilteredTasks("todayAndFuture"); // Only show today and future tasks
-    updateTaskContainer(filteredTasks);
+    updateTaskContainer();
     resetForm();
-    currentMainTitle = "last added";
-    mainTitleField();
+    displayAllTasks();
 }
 
 export const addPriority = (button) => {
@@ -133,6 +131,7 @@ if (taskData.length) {
 
 const findDataArrIndex = (button) => {
     const card = button.closest(".reminder-card");
+
     if (!card) {
         console.error("Reminder card not found for the clicked button.");
         return -1;
@@ -149,16 +148,55 @@ const findDataArrIndex = (button) => {
 };
 
 export const deleteTask = (button) => {
-    const dataArrIndex = findDataArrIndex(button);
+    let taskId;
 
-    button.parentElement.remove();
+    // Determine the task ID based on the button type
+    if (button.matches("#delete-btn")) {
+        // Get the task ID from the parent `.reminder-card`
+        const card = button.closest(".reminder-card");
+        if (!card) {
+            console.error("Reminder card not found for the delete button.");
+            return;
+        }
+        taskId = card.id;
+    } else if (button.matches("#all-menu-delete-btn")) {
+        // Get the task ID from the `data-task-id` attribute
+        taskId = button.getAttribute("data-task-id");
+        if (!taskId) {
+            console.error("Task ID not found for the delete button.");
+            return;
+        }
+    } else {
+        console.error("Delete button does not match any known types.");
+        return;
+    }
 
+    // Find the index of the task in taskData
+    const dataArrIndex = taskData.findIndex((task) => task.id === taskId);
+
+    if (dataArrIndex === -1) {
+        console.error(`Task with ID ${taskId} not found in taskData.`);
+        return;
+    }
+
+    // Move the task to the completed reminders list
     completedReminders.push(taskData[dataArrIndex]);
     saveData("completed", completedReminders);
 
+    // Remove the task from taskData
     taskData.splice(dataArrIndex, 1);
     saveData("data", taskData);
-}
+
+    // Remove the task's DOM element
+    const taskElement = button.closest(".reminder-card") || button.closest(".today-reminder");
+    if (taskElement) {
+        taskElement.remove();
+    } else {
+        console.error("Task element not found in the DOM.");
+    }
+
+    displayAllTasks();
+};
 
 export const editTask = (button) => {
     const dataArrIndex = findDataArrIndex(button);
@@ -241,8 +279,9 @@ export const displayAllTasks = () => {
                     </div>
                     <hr>
                     <div id="completed-list-container">
-                    <p><strong>${completedReminders.length}</strong> Completed/Expired</p> 
+                    <p><strong>${completedTaskCount()}</strong> Completed/Expired</p> 
                     <button id="show-completed-btn">Show</button>
+                    <button id="clear-btn">Clear</button>
                     </div>
                     <div id="completed-list-content" class="hidden">
                         ${completedTasks()}
@@ -257,9 +296,18 @@ const renderTaskTemplate = (task) => `
     <div class="today-reminder">
         <p>${task.priority} priority</p>
         <p>${task.date} - ${task.time}</p>
+        <input type="image" src="./icons/close-icon.svg" id="all-menu-delete-btn" class="close-task-btn" alt="close button" data-task-id="${task.id}">
         <p>${getDaytime(task.time)}</p>
         <p>${task.description}</p>
-        <input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn" alt="close button" data-task-id="${task.id}">
+    </div>
+`;
+
+const renderCompleteTaskTemplate = (task) => `
+    <div class="completed-reminder">
+        <p>${task.priority} priority</p>
+        <p>${task.date} - ${task.time}</p>
+        <p>${getDaytime(task.time)}</p>
+        <p>${task.description}</p>
     </div>
 `;
 
@@ -282,11 +330,35 @@ const completedTasks = () => {
 
     const allTasks = [...completedReminders, ...previousDateTasks];
 
-    return allTasks.map(renderTaskTemplate).join("");
+    return allTasks.map(renderCompleteTaskTemplate).join("");
 }
 
-export const deleteExpiredTasks = () => {
-    // Find all expired tasks
+export const clearCompletedTasks = () => {
+    const notExpiredTasks = getFilteredTasks("todayAndFuture");
+
+    // Check if completed tasks exist in localStorage
+    if (!completedReminders || completedReminders.length === 0) {
+        console.warn("No completed tasks to clear.");
+        return;
+    }
+
+    // Clear the "completed" key in local storage
+    localStorage.removeItem("completed");
+
+    // Clear the `completedReminders` array
+    completedReminders = [];
+
+    taskData.splice(0, taskData.length, ...notExpiredTasks);
+    saveData("data", taskData);
+
+     // Clear the DOM container for completed tasks
+     const completedTasksContainer = document.querySelector("#completed-list-content");
+     completedTasksContainer.innerHTML = "";
+     displayAllTasks();
+};
+
+
+export const transferExpiredTasks = () => {
     const previousDateTasks = getFilteredTasks("expired")
 
     previousDateTasks.forEach((task) => {
@@ -307,6 +379,22 @@ export const deleteExpiredTasks = () => {
     saveData("data", taskData);
 };
 
+export const searchbarFunction = () => {
+    const searchWord = searchbar.value.toLowerCase();
+    return taskData.filter(task => {
+        return (
+            task.description.toLowerCase().includes(searchWord) ||
+            task.date.includes(searchWord) ||
+            task.priority.toLowerCase().includes(searchWord) ||
+            task.time.includes(searchWord)
+        );
+    });
+}
+
+export const displaySearchResults = () => {
+    const results = searchbarFunction();
+    updateTaskContainer(results);
+}
 
 const mainTitleField = () => {
     if (currentMainTitle === "today") {
@@ -319,11 +407,6 @@ const mainTitleField = () => {
         mainTitle.innerHTML = "Last added"
     }
 }
-
-const todayAndFutureTasksCount = () => {
-    const filteredTasks = getFilteredTasks("todayAndFuture");
-    return filteredTasks.length;
-};
 
 const getFilteredTasks = (filterType) => {
     if (filterType === "todayAndFuture") {
@@ -352,3 +435,15 @@ const saveData = (key, data) => {
 const removeSpecialChars = (val) => {
     return val.trim().replace(/[^A-Za-z0-9\-\s]/g, '')
 }
+
+export const completedTaskCount = () => {
+    const completedTasks = getFilteredTasks("completed");
+    const expiredTasks = getFilteredTasks("expired");
+    const bothTasks = [...completedTasks, ...expiredTasks];
+    return bothTasks.length;
+}
+
+const todayAndFutureTasksCount = () => {
+    const filteredTasks = getFilteredTasks("todayAndFuture");
+    return filteredTasks.length;
+};
