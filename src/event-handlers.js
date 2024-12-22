@@ -1,9 +1,13 @@
-import { cardForm, displayForm, content, addButton, priorityButtons, todayBtn, allTasksBtn, scheduledBtn, searchbar} from './dom-elements.js';
-import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, transferExpiredTasks, clearCompletedTasks, searchbarFunction, displaySearchResults, updateCompletedTaskCount, updateCompletedTaskList, displayCompletedTaskCount} from './functions.js';
+import { displayForm, content, addButton, priorityButtons, todayBtn, allTasksBtn, scheduledBtn, searchbar} from './dom-elements.js';
+import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, transferExpiredTasks, clearCompletedTasks, displaySearchResults, alarm, removeHighlight, updateTaskContainer} from './functions.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     transferExpiredTasks();
-    updateTaskContainer(); // Ensure the DOM reflects the updated tasks
+    updateTaskContainer();
+    alarm();
+    setInterval(() => {
+        alarm();
+    }, 60000);
 });
 
 export const openForm = () => {
@@ -61,23 +65,9 @@ content.addEventListener("click", (event) => {
 });
 
 
+
+
 todayBtn.addEventListener("click", displayTodayAddedTasks);
 scheduledBtn.addEventListener("click", displayScheduledTasks);
 allTasksBtn.addEventListener("click", displayAllTasks);
 searchbar.addEventListener("input", displaySearchResults);
-
-
-
-// const forms = [
-//     { buttonId: "#add-task-btn", formId: "#add-task-form" },
-//     { buttonId: "#edit-task-btn", formId: "#edit-task-form" },
-//     { buttonId: "#add-reminder-btn", formId: "#add-reminder-form" },
-// ];
-
-// forms.forEach(({ buttonId, formId }) => {
-//     const button = document.querySelector(buttonId);
-//     const form = document.querySelector(formId);
-
-//     // Use the refactored function to bind the toggle behavior
-//     openForm(button, form);
-// });

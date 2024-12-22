@@ -1,13 +1,17 @@
 import { da, ta } from "date-fns/locale";
+import editIcon from './icons/edit.svg';
+import deleteIcon from './icons/close-icon.svg';
 import { displayForm, date, priorityButtons, time, reminder, addFormButton, initialTaskList, mainTitle, searchbar} from "./dom-elements";
 
-const taskData = JSON.parse(localStorage.getItem("data")) || [];
+let taskData = JSON.parse(localStorage.getItem("data")) || [];
 let currentTask = {};
-let completedReminders = JSON.parse(localStorage.getItem("completed")) || [];
+let completedReminders = JSON.parse(localStorage.getItem("complete")) || [];
 let daytime;
 const DEFAULT_PRIORITY = "Medium";
 let selectPriority = DEFAULT_PRIORITY;
 const today = new Date().toISOString().split('T')[0];
+const now = new Date();
+const currentTime = now.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: false });
 let currentMainTitle = "All";
 date.value = today;
 
@@ -47,9 +51,9 @@ export const updateTaskContainer = (tasks = taskData) => {
                         <div id="time-date-container">
                         <p id="date-content">${date}</p>
                         <p id="time-content">${time}</p>
-                        ${!isExpired ? `<input type="image" src="./icons/edit.svg" class="edit-btn container-btn" alt="edit button">` : ""}
+                        ${!isExpired ? `<input type="image" src="${editIcon}" class="edit-btn container-btn" alt="edit button">` : ""}
                         </div>
-                        ${!isExpired ? `<input type="image" src="./icons/close-icon.svg" id="delete-btn" class="close-task-btn container-btn" alt="close button">` : ""}
+                        ${!isExpired ? `<input type="image" src="${deleteIcon}" id="delete-btn" class="close-task-btn container-btn" alt="close button">` : ""}
                     </div>`
     });
 
@@ -181,7 +185,7 @@ export const deleteTask = (button) => {
 
     // Move the task to the completed reminders list
     completedReminders.push(taskData[dataArrIndex]);
-    saveData("completed", completedReminders);
+    saveData("complete", completedReminders);
 
     // Remove the task from taskData
     taskData.splice(dataArrIndex, 1);
@@ -262,7 +266,6 @@ export const displayScheduledTasks = () => {
 export const displayAllTasks = () => {
     content.innerHTML = "";
 
-
     content.innerHTML += `
                 <div id="scheduled-container">
                     <div id="tasks-count"><strong>${todayAndFutureTasksCount()}</strong> 
@@ -296,7 +299,7 @@ const renderTaskTemplate = (task) => `
     <div class="today-reminder">
         <p>${task.priority} priority</p>
         <p>${task.date} - ${task.time}</p>
-        <input type="image" src="./icons/close-icon.svg" id="all-menu-delete-btn" class="close-task-btn" alt="close button" data-task-id="${task.id}">
+        <input type="image" src="${deleteIcon}" id="all-menu-delete-btn" class="close-task-btn" alt="close button" data-task-id="${task.id}">
         <p>${getDaytime(task.time)}</p>
         <p>${task.description}</p>
     </div>
@@ -326,9 +329,10 @@ const futureScheduledTasks = () => {
 const completedTasks = () => {
     const completedReminders = getFilteredTasks("completed");
     const previousDateTasks = taskData.filter(//get previous date tasks and also exclude duplicated from completed ones
-        (task) => task.date < today && !completedReminders.some((completedTasks) => completedTasks.id === task.id)) 
-
-    const allTasks = [...completedReminders, ...previousDateTasks];
+        (task) => task.date < today && !completedReminders.some((completedTasks) => completedTasks.id === task.id));
+    const alarmedTasks = taskData.filter((task) => task.time === currentTime && !completedReminders.some((completedTask) => completedTask.id === task.id));
+    
+    const allTasks = [...completedReminders, ...previousDateTasks, ...alarmedTasks];
 
     return allTasks.map(renderCompleteTaskTemplate).join("");
 }
@@ -343,7 +347,7 @@ export const clearCompletedTasks = () => {
     }
 
     // Clear the "completed" key in local storage
-    localStorage.removeItem("completed");
+    localStorage.removeItem("complete");
 
     // Clear the `completedReminders` array
     completedReminders = [];
@@ -372,11 +376,14 @@ export const transferExpiredTasks = () => {
         completedReminders.push(task);
     });    
    
-    // Remove expired tasks from taskData
-    taskData = getFilteredTasks("todayAndFuture")
-
+    taskData = taskData.filter(
+        (task) => !previousDateTasks.some((expiredTask) => expiredTask.id === task.id)
+    );
+    
     saveData("complete", completedReminders);
     saveData("data", taskData);
+
+    displayAllTasks(); 
 };
 
 export const searchbarFunction = () => {
@@ -414,11 +421,13 @@ const getFilteredTasks = (filterType) => {
     } else if (filterType === "expired") {
         return taskData.filter((task) => task.date < today);
     } else if (filterType === "completed") {
-        return JSON.parse(localStorage.getItem("completed")) || [];
+        return JSON.parse(localStorage.getItem("complete")) || [];
     } else if (filterType === "future") {
         return taskData.filter((task) => task.date > today);
     } else if (filterType === "today") {
         return taskData.filter((task) => task.date === today);
+    } else if (filterType === "currentTime") {
+        return taskData.filter((task) => task.time <= currentTime && task.date === today);
     }
     return taskData; // Default: return all tasks
 };
@@ -447,3 +456,48 @@ const todayAndFutureTasksCount = () => {
     const filteredTasks = getFilteredTasks("todayAndFuture");
     return filteredTasks.length;
 };
+
+export const alarm = () => {
+    const timedTasks = getFilteredTasks("currentTime");
+
+    if (timedTasks.length > 0) {
+        // Highlight each timed task's DOM element
+        timedTasks.forEach((task) => {
+            const taskElement = document.getElementById(task.id);
+
+            if (taskElement) {
+                taskElement.classList.add("alert-display");
+                overlay.style.display = "block"
+
+                removerContainerButtons(taskElement);
+                
+                // Function to remove the highlight when the user clicks
+                const removeHighlight = () => {
+                    taskElement.classList.remove("alert-display");
+                    overlay.style.display = "none"
+                    document.removeEventListener("click", removeHighlight); // Clean up listener
+                };
+
+                // Add click event listener to the document
+                document.addEventListener("click", () => {
+                    removeHighlight();
+                    taskElement.remove();
+                });
+            }
+            completedReminders.push(task);
+        
+        });
+        // Update taskData to exclude completed tasks
+        taskData = taskData.filter((task) => !timedTasks.some((timedTask) => timedTask.id === task.id));
+
+        saveData("complete", completedReminders);
+        saveData("data", taskData);
+    }
+};
+
+const removerContainerButtons = (taskElement) => {
+    const containerButtons = taskElement.querySelectorAll(".container-btn");
+    containerButtons.forEach((button) => {
+        button.remove();
+    });
+}
