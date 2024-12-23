@@ -34,6 +34,23 @@ const getDaytime = (time) => {
     }
 };
 
+const setPriorityColor = () => {
+    taskData.forEach((task) => {
+        const taskElement = document.getElementById(task.id);
+
+        if (taskElement) {
+            taskElement.classList.remove("priority-low", "priority-medium", "priority-high");
+
+            if (task.priority === "Low") {
+                taskElement.classList.add("priority-low")
+            } else if (task.priority === "Medium") {
+                taskElement.classList.add("priority-medium");
+            } else if (task.priority === "High") {
+                taskElement.classList.add("priority-high");
+            }
+        }
+    });
+}
 
 export const updateTaskContainer = (tasks = taskData) => {
     content.innerHTML = "";
@@ -43,19 +60,23 @@ export const updateTaskContainer = (tasks = taskData) => {
         
         content.innerHTML += `
                     <div class="reminder-card ${isExpired ? "expired-task" : ""}" id="${id}">         
-                        <div id="reminder-card-upper-description">           
+                        <div id="reminder-card-left-side">           
                             <h2>${getDaytime(time)}</h2>
-                            <p id="reminder-card-description">${description}</p>
                             <p><strong>Priority: </strong>${priority}</p>
-                        </div>    
-                        <div id="time-date-container">
-                        <p id="date-content">${date}</p>
-                        <p id="time-content">${time}</p>
-                        ${!isExpired ? `<input type="image" src="${editIcon}" class="edit-btn container-btn" alt="edit button">` : ""}
+                            <div id="time-date-container">
+                                <p id="date-content">${date}</p>
+                                 <p id="time-content">${time}</p>
+                                ${!isExpired ? `<input type="image" src="${editIcon}" class="edit-btn container-btn" alt="edit button">` : ""}
+                            </div>    
+                        </div>
+                        <div id="reminder-card-right-side">
+                            <p>${description}</p>
                         </div>
                         ${!isExpired ? `<input type="image" src="${deleteIcon}" id="delete-btn" class="close-task-btn container-btn" alt="close button">` : ""}
                     </div>`
     });
+
+    setPriorityColor();
 
     console.log("Updated DOM with Task Data:", taskData); // Debug log
 }
@@ -93,7 +114,7 @@ export const addOrUpdateTask = () => {
     
     saveData("data", taskData);
     saveData("complete", completedReminders);
-
+    
     updateTaskContainer();
     resetForm();
     displayAllTasks();
@@ -101,7 +122,6 @@ export const addOrUpdateTask = () => {
 
 export const addPriority = (button) => {
     button.classList.add("selected");
-    selectPriority = button.getAttribute("data-value");
 }
 
 export const removePriority = (btn) => {
@@ -282,8 +302,8 @@ export const displayAllTasks = () => {
                     </div>
                     <hr>
                     <div id="completed-list-container">
-                    <p><strong>${completedTaskCount()}</strong> Completed/Expired</p> 
                     <button id="show-completed-btn">Show</button>
+                    <p><strong>${completedTaskCount()}</strong> Completed/Expired</p> 
                     <button id="clear-btn">Clear</button>
                     </div>
                     <div id="completed-list-content" class="hidden">

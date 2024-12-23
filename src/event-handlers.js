@@ -1,5 +1,5 @@
 import { displayForm, content, addButton, priorityButtons, todayBtn, allTasksBtn, scheduledBtn, searchbar} from './dom-elements.js';
-import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, transferExpiredTasks, clearCompletedTasks, displaySearchResults, alarm, removeHighlight, updateTaskContainer} from './functions.js';
+import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, transferExpiredTasks, clearCompletedTasks, displaySearchResults, alarm, updateTaskContainer} from './functions.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     transferExpiredTasks();
