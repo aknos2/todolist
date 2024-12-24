@@ -15,6 +15,7 @@ export const mainTitle = document.querySelector("#main-title");
 export const scheduledBtn = document.querySelector("#scheduled-btn");
 export const completeTasksDeleteBtn = document.querySelector(".close-task-btn");
 export const searchbar = document.querySelector("#searchbar");
+export const sideMenuButtons = document.querySelectorAll(".side-menu-button");
 
 export const initialTaskList = [
     {

@@ -1,7 +1,7 @@
-import { da, ta } from "date-fns/locale";
+import { format } from "date-fns";
 import editIcon from './icons/edit.svg';
 import deleteIcon from './icons/close-icon.svg';
-import { displayForm, date, priorityButtons, time, reminder, addFormButton, initialTaskList, mainTitle, searchbar} from "./dom-elements";
+import { displayForm, date, priorityButtons, time, reminder, addFormButton, initialTaskList, mainTitle, searchbar, sideMenuButtons} from "./dom-elements";
 
 let taskData = JSON.parse(localStorage.getItem("data")) || [];
 let currentTask = {};
@@ -14,6 +14,27 @@ const now = new Date();
 const currentTime = now.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: false });
 let currentMainTitle = "All";
 date.value = today;
+
+const getWeekDay = (taskDate) => {
+    return format(new Date(taskDate), "EEE");
+}
+
+export const setSideMenuButtonColor = (event) => {
+    sideMenuButtons.forEach((btn) => btn.classList.remove("side-menu-button-color"));
+
+    const button = event.currentTarget;
+    button.classList.add("side-menu-button-color");
+};
+
+export const setDefaultTime = () => {
+    const now = new Date(); // Declare `now` inside the function for accuracy on every call
+    const presentTime = now.toTimeString().slice(0, 5); // Extracts "HH:MM" directly
+
+    const timeInput = document.getElementById("time");
+    if (timeInput) {
+        timeInput.value = presentTime;
+    }
+};
 
 export const closeForm = (event) => {
     const button = event.target;
@@ -34,7 +55,7 @@ const getDaytime = (time) => {
     }
 };
 
-const setPriorityColor = () => {
+function setPriorityColor () {
     taskData.forEach((task) => {
         const taskElement = document.getElementById(task.id);
 
@@ -61,7 +82,7 @@ export const updateTaskContainer = (tasks = taskData) => {
         content.innerHTML += `
                     <div class="reminder-card ${isExpired ? "expired-task" : ""}" id="${id}">         
                         <div id="reminder-card-left-side">           
-                            <h2>${getDaytime(time)}</h2>
+                            <h2>${getWeekDay(date)} <span id="time-of-day">${getDaytime(time)}</span></h2>
                             <p><strong>Priority: </strong>${priority}</p>
                             <div id="time-date-container">
                                 <p id="date-content">${date}</p>
@@ -270,7 +291,12 @@ export const initialTasks = () => {
 export const displayTodayAddedTasks = () => {
     const todayTasks = getFilteredTasks("today");
 
-    updateTaskContainer(todayTasks);
+    if (todayTasks.length === 0) {
+        content.innerHTML = `<div id="no-reminders-message">No reminders</div>`;
+    } else {
+        updateTaskContainer(todayTasks);
+    }
+    
     currentMainTitle = "today";
     mainTitleField();
 }
@@ -278,7 +304,12 @@ export const displayTodayAddedTasks = () => {
 export const displayScheduledTasks = () => {    
     const filteredTasks = getFilteredTasks("future");
 
-    updateTaskContainer(filteredTasks);
+    if (filteredTasks.length === 0) {
+        content.innerHTML = `<div id="no-reminders-message">No reminders</div>`;
+    } else {
+        updateTaskContainer(filteredTasks);
+    }
+
     currentMainTitle = "scheduled";
     mainTitleField();
 }
@@ -318,7 +349,7 @@ export const displayAllTasks = () => {
 const renderTaskTemplate = (task) => `
     <div class="today-reminder">
         <p>${task.priority} priority</p>
-        <p>${task.date} - ${task.time}</p>
+        <p id="all-container-date-line">${task.date} - ${task.time} - ${getWeekDay(task.date)}</p>
         <input type="image" src="${deleteIcon}" id="all-menu-delete-btn" class="close-task-btn" alt="close button" data-task-id="${task.id}">
         <p>${getDaytime(task.time)}</p>
         <p>${task.description}</p>
@@ -328,7 +359,7 @@ const renderTaskTemplate = (task) => `
 const renderCompleteTaskTemplate = (task) => `
     <div class="completed-reminder">
         <p>${task.priority} priority</p>
-        <p>${task.date} - ${task.time}</p>
+        <p id="all-container-date-line">${task.date} - ${task.time} - ${getWeekDay(task.date)}</p>
         <p>${getDaytime(task.time)}</p>
         <p>${task.description}</p>
     </div>
@@ -336,12 +367,20 @@ const renderCompleteTaskTemplate = (task) => `
 
 const todayScheduledTasks = () => {
     const todayTasks = getFilteredTasks("today");
+    
+    if (todayTasks.length === 0) {
+        return `<div id="no-reminders-message">No reminders</div>`
+    }
 
     return todayTasks.map(renderTaskTemplate).join("");
 }
 
 const futureScheduledTasks = () => {
     const futureTasks = getFilteredTasks("future");
+
+    if (futureTasks.length === 0) {
+        return `<div id="no-reminders-message">No reminders</div>`
+    }
 
     return futureTasks.map(renderTaskTemplate).join("");
 }
@@ -484,9 +523,12 @@ export const alarm = () => {
         // Highlight each timed task's DOM element
         timedTasks.forEach((task) => {
             const taskElement = document.getElementById(task.id);
+            const timeDateContainer = document.querySelector("#time-date-container");
 
             if (taskElement) {
                 taskElement.classList.add("alert-display");
+                //fix date and time alignment
+                timeDateContainer.setAttribute("style", "justify-content:center");
                 overlay.style.display = "block"
 
                 removerContainerButtons(taskElement);

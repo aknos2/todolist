@@ -6,16 +6,17 @@
 
 :root {
     --card-add-form: rgb(225, 205, 30);
-    --side-menu: rgb(206, 223, 230);
-    --priority-low: rgb(153, 212, 108);
-    --priority-medium: rgb(239, 197, 72);
-    --priority-high: rgb(246, 162, 66);
+    --side-menu: rgba(119, 194, 227, 0.9);
+    --priority-low: linear-gradient(to right, rgb(153, 212, 108), rgb(124, 219, 124));
+    --priority-medium: linear-gradient(to right, rgb(239, 197, 72), rgb(235, 209, 79));
+    --priority-high: linear-gradient(to right, rgb(253, 157, 98), rgb(254, 168, 76));
+    --side-menu-buttons: rgb(239, 72, 64, 0.9);
 }
 
 body {
     margin: 0;
     padding: 0;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     height: 100%;
 }
 
@@ -52,7 +53,7 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     grid-column: 2/ -1;
 }
 
-.side-menu-cards {
+.side-menu-button {
     width: 250px;
     height: 150px;
     border-radius: 10px;
@@ -71,7 +72,7 @@ button:hover, input[type=button]:hover, .close-icon:hover {
 #searchbar-icon {
     height: 30px;
     width: 30px;
-    background: var(--priority-medium) url("./icons/magnify.svg");
+    background: rgb(239, 197, 72) url("./icons/magnify.svg");
     border: 1px solid black;
 }
 
@@ -112,7 +113,7 @@ button:hover, input[type=button]:hover, .close-icon:hover {
 }
 
 .card-form {
-    background-color: var(--card-form);
+    background-color: var(--card-add-form);
     width: 600px;
     height: 370px;
     padding: 10px;
@@ -184,7 +185,7 @@ input[type="button"].selected {
 }
 
 #reminder-card-right-side {
-    padding: 20px;
+    padding: 10px;
     overflow: auto;
     word-wrap: break-word; /* Ensures text wraps to the next line */
     word-break: break-word; /* Break long words */
@@ -194,6 +195,7 @@ input[type="button"].selected {
     line-height: 1.3;
     height: 130px;
     text-indent: 5px;
+    font-size: 1.7rem;
 }
 
 #delete-btn {
@@ -330,6 +332,8 @@ h4 {
     margin-bottom: 30px;
     height: 100px;
     background-color: #d9ede5;
+    white-space: nowrap;
+    overflow: auto;
 }
 
 #all-menu-delete-btn {
@@ -376,6 +380,8 @@ h4 {
     height: 100px;
     background-color: #d9ede5;
     font-size: 0.9em;
+    white-space: nowrap;
+    overflow: auto;
 }
 
 .expired-task {
@@ -392,7 +398,6 @@ h4 {
     height: auto;
     padding: 20px;
     background-color: rgb(225, 74, 74);
-    font-size: 1.5rem;
     text-align: center;
     z-index: 1000;
     border-radius: 10px;
@@ -400,13 +405,30 @@ h4 {
 }
 
 .priority-low {
-    background-color: var(--priority-low);
+    background: var(--priority-low);
 }
 
 .priority-medium {
-    background-color: var(--priority-medium);
+    background: var(--priority-medium);
 }
 
 .priority-high {
-    background-color: var(--priority-high);
+    background: var(--priority-high);
+}
+
+.side-menu-button-color {
+    background: var(--side-menu-buttons);
+}
+
+#time-of-day {
+    font-size: 2.1rem;
+    font-weight: lighter;
+}
+
+#all-container-date-line {
+    width: 100%;
+}
+
+#no-reminders-message {
+    margin-left: 30px;
 }
