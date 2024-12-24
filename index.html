@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List Odin Project</title>
+<script defer src="bundle.144334512751f53bb7ef.js"></script></head>
+<body>
+    <div id="container">
+        <div id="side-menu">
+            <form id="search-calendar-form">
+                <div id="searchbar-icon"></div>
+                <input id="searchbar" name="search" type="search" placeholder="Search">
+            </form>
+            <button class="side-menu-button" id="all-btn"><li>All</li></button>
+            <button class="side-menu-button" id="today-btn"><li>Today</li></button>
+            <button class="side-menu-button" id="scheduled-btn"><li>Scheduled</li></button>
+        </div>
+        <div id="main">
+            <div id="main-title-container"><h1 id="main-title">All</h1></div>
+                <div id="content"></div>
+
+                    <div id="overlay" class="hidden"></div>
+                    <form class="card-form hidden" id="card-form">
+
+                        <div class="task-form-header">
+                            <button id="close-task-form-btn" class="close-task-form-btn"  id="close-icon" type="button" aria-label="close"></button>
+                        </div>
+                
+                        <h2>Priority</h2>
+                        <div id="priority">
+                            <input type="button" class="task selected" id="low-btn" value="Low" data-value="Low" required>
+                            <input type="button" class="task selected" id="medium-btn" value="Medium" data-value="Medium" required>
+                            <input type="button" class="task selected" id="high-btn" value="High" data-value="High" required>
+                        </div>    
+                        <h2>Remind me:</h2>
+                        <div id="remind-time">
+                            <label for="time" class="task-form-label">Time:</label>
+                            <input type="time" class="form-control" id="time" required>
+                            <label class="task-form-label" for="date-input">Date</label>
+                            <input type="date" class="form-control" id="date-input" value=""/>
+                        </div>
+                        <div id="description-card">
+                            <h2>Description:</h2>
+                            <form>
+                                <textarea name="reminder" id="reminder"></textarea>
+                            </form>
+                            <button id="add-form-btn" type="submit">Add reminder</button>
+                        </div>
+                    </form>
+                
+                <button id="add-button" type="button">Add +</button>
+    </div>
+</body>
+</html>
