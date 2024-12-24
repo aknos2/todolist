@@ -447,6 +447,12 @@ export const transferExpiredTasks = () => {
 
 export const searchbarFunction = () => {
     const searchWord = searchbar.value.toLowerCase();
+
+    if (!searchWord) {
+        content.innerHTML = `<div id="no-reminders-message">No matches<div>`
+        return;
+    }  
+    
     return taskData.filter(task => {
         return (
             task.description.toLowerCase().includes(searchWord) ||
@@ -459,6 +465,10 @@ export const searchbarFunction = () => {
 
 export const displaySearchResults = () => {
     const results = searchbarFunction();
+    if (taskData.length === 0) {
+        content.innerHTML = `<div id="no-reminders-message">No matches<div>`
+        return
+    }
     updateTaskContainer(results);
 }
 

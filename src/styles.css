@@ -39,6 +39,10 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     height: 100vh;
 }
 
+#main {
+    overflow: auto;
+}
+
 #side-menu {
     background-color: var(--side-menu);
     grid-column: 1/2;
@@ -47,6 +51,7 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     flex-wrap: wrap;
     align-items: center;
     gap: 40px;
+    border-right: 1px solid black;
 }
 
 #main-content {
@@ -54,24 +59,28 @@ button:hover, input[type=button]:hover, .close-icon:hover {
 }
 
 .side-menu-button {
-    width: 250px;
+    min-width: 290px;
     height: 150px;
     border-radius: 10px;
+    margin-top: 20px;
+    font-size: 1.7rem;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 #search-calendar-form {
-    padding-top: 40px;
+    margin-top: 50px;
     display: flex;
 }
 
 #searchbar {
-    height: 30px;
+    height: 40px;
     font-size: 0.7em;
+    min-width: 230px;
 }
 
 #searchbar-icon {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
     background: rgb(239, 197, 72) url("./icons/magnify.svg");
     border: 1px solid black;
 }
@@ -119,11 +128,12 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     padding: 10px;
     border-radius: 5px;
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     border: 2px solid black;
     z-index: 10;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .close-icon {
@@ -156,6 +166,18 @@ input[type="button"].selected {
     align-items: center;
     justify-content: center;
     gap: 20px;
+    padding: 10px;
+    padding-bottom: 17px;
+}
+
+form h2 {
+    padding-bottom: 7px;
+    padding-top: 5px;
+}
+
+form:first-of-type h2 {
+    padding-top: 0;
+    margin-top: -5px;
 }
 
 .reminder-card {
@@ -182,6 +204,7 @@ input[type="button"].selected {
     flex-wrap: wrap;
     gap: 10px;
     min-width: 300px;
+    margin-left: 15px;
 }
 
 #reminder-card-right-side {
@@ -235,11 +258,13 @@ textarea {
     width: 100%;
     height: 150px;
     padding: 12px 20px;
-    border: 2px solid #ccc;
+    border: 2px solid #3b3737;
     border-radius: 4px;
     background-color: #f8f8f8;
     font-size: 1.8rem;
     resize: none;
+    outline: none;
+    margin-top: 10px;
 }
 
 #remind-time {
@@ -260,11 +285,17 @@ input[type=time], input[type=date] {
     height: auto;
     min-height: 310px;
     border-radius: 10px;
+    box-shadow: 0px 5px 0px rgba(0, 0, 0, 0.3);
+    margin-top: 5px;
+}
+
+#description-card h2 {
+    padding-top: 10px;
 }
 
 #add-form-btn {
     float: right;
-    margin-top: 30px;
+    margin-top: 20px;
     margin-right: 70px;
     font-size: 1.4em;
 }
