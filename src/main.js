@@ -3,4 +3,4 @@ import { openForm } from './event-handlers.js';
 
 openForm();
 
-//Container.initialTasks();
+Container.initialTasks();
