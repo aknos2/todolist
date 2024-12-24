@@ -5,12 +5,16 @@
 }
 
 :root {
-    --card-add-form: rgb(225, 205, 30);
+    --card-add-form: rgb(229, 179, 63);;
     --side-menu: rgba(119, 194, 227, 0.9);
     --priority-low: linear-gradient(to right, rgb(153, 212, 108), rgb(124, 219, 124));
     --priority-medium: linear-gradient(to right, rgb(239, 197, 72), rgb(235, 209, 79));
     --priority-high: linear-gradient(to right, rgb(253, 157, 98), rgb(254, 168, 76));
     --side-menu-buttons: rgb(239, 72, 64, 0.9);
+    --edit-button: rgb(113, 181, 210);
+    --select-priority-button: rgb(73, 144, 53);
+    --add-button: rgb(239, 197, 72);
+    font-size: 16px;
 }
 
 body {
@@ -36,7 +40,8 @@ button:hover, input[type=button]:hover, .close-icon:hover {
 #container {
     display: grid;
     grid-template-columns: 1fr 4fr;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
 }
 
 #main {
@@ -117,7 +122,7 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background-color:rgb(239, 197, 72);
+    background-color: var(--add-button);
     border: none;
 }
 
@@ -155,7 +160,7 @@ button:hover, input[type=button]:hover, .close-icon:hover {
 }
 
 input[type="button"].selected {
-    background-color: #4caf50; /* Green background */
+    background-color: var(--select-priority-button);
     color: white; /* White text */
     border: 2px solid #4caf50;
 }
@@ -249,9 +254,9 @@ form:first-of-type h2 {
 }
 
 .edit-btn:hover {
-    border: 1px solid #04AA6D;
+    border: 1px solid #063926;
     border-radius: 5px;
-    background-color:rgb(113, 201, 88, 0.3) ;
+    background-color: var(--edit-button);
 }
 
 textarea {
@@ -281,11 +286,11 @@ input[type=time], input[type=date] {
 
 #description-card {
     width: 100%;
-    background-color: rgb(225, 205, 30);
+    background-color: var(--card-add-form);
     height: auto;
-    min-height: 310px;
+    min-height: 320px;
     border-radius: 10px;
-    box-shadow: 0px 5px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 4px 0px rgb(112, 92, 55);
     margin-top: 5px;
 }
 
