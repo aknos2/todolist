@@ -1,14 +1,5 @@
 import { displayForm, content, addButton, priorityButtons, todayBtn, allTasksBtn, scheduledBtn, searchbar, sideMenuButtons} from './dom-elements.js';
-import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, transferExpiredTasks, clearCompletedTasks, displaySearchResults, alarm, updateTaskContainer, setDefaultTime, setSideMenuButtonColor} from './functions.js';
-
-document.addEventListener("DOMContentLoaded", () => {
-    transferExpiredTasks();
-    updateTaskContainer();
-    alarm();
-    setInterval(() => {
-        alarm();
-    }, 60000);
-});
+import { addOrUpdateTask, addPriority, removePriority, deleteTask, editTask, closeForm, resetForm, displayTodayAddedTasks, displayAllTasks, displayScheduledTasks, transferExpiredTasks, clearCompletedTasks, displaySearchResults, alarm, updateTaskContainer, setDefaultTime, setSideMenuButtonColor, initialTasks} from './functions.js';
 
 export const openForm = () => {
     addButton.addEventListener("click", () => {

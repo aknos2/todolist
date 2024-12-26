@@ -17,19 +17,31 @@ export const completeTasksDeleteBtn = document.querySelector(".close-task-btn");
 export const searchbar = document.querySelector("#searchbar");
 export const sideMenuButtons = document.querySelectorAll(".side-menu-button");
 
+const today = new Date().toISOString().split('T')[0];
+
 export const initialTaskList = [
     {
         priority: "High",
         time: "12:00",
-        date: "2024-12-30",
+        date: "2025-12-30",
         description: "Do the dishes",
-        daytime: "Morning"
     },
     {
         priority: "Low",
         time: "19:00",
-        date: "2025-01-13",
-        description: "Ken's birthday",
-        daytime: "Evening"
+        date: "2030-12-13",
+        description: "Bob's birthday",
+    },
+    {
+        priority: "Medium",
+        time: "23:00",
+        date: today,
+        description: "This reminder is for today. Have a good day!",
+    },
+    {
+        priority: "Low",
+        time: "06:00",
+        date: "2024-12-01",
+        description: "Expired reminder",
     }
 ];

@@ -167,7 +167,6 @@ export const resetForm = () => {
     overlay.style.display = "none";
     displayForm.classList.add("hidden");
     addFormButton.innerHTML = "Add reminder";
-    mainTitle.innerHTML = "";
 }
 
 if (taskData.length) {
@@ -472,7 +471,7 @@ export const displaySearchResults = () => {
     updateTaskContainer(results);
 }
 
-const mainTitleField = () => {
+export const mainTitleField = () => {
     if (currentMainTitle === "today") {
         mainTitle.innerHTML = "Today";
     } else if (currentMainTitle === "all") {
@@ -511,7 +510,7 @@ const saveData = (key, data) => {
 }
 
 const removeSpecialChars = (val) => {
-    return val.trim().replace(/[^A-Za-z0-9\-\s]/g, '')
+    return val.trim().replace(/[^A-Za-z0-9\s\-\!\?\.,\"~\^]/g, '');
 }
 
 export const completedTaskCount = () => {
