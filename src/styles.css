@@ -2,6 +2,7 @@
 *::after,
 *::before {
     box-sizing: border-box;
+    padding: 0;
 }
 
 :root {
@@ -14,7 +15,6 @@
     --edit-button: rgb(113, 181, 210);
     --select-priority-button: rgb(73, 144, 53);
     --add-button: rgb(239, 197, 72);
-    font-size: 16px;
 }
 
 body {
@@ -22,6 +22,7 @@ body {
     padding: 0;
     font-size: 1.5rem;
     height: 100%;
+    width: 100%;
 }
 
 li {
@@ -39,13 +40,14 @@ button:hover, input[type=button]:hover, .close-icon:hover {
 
 #container {
     display: grid;
-    grid-template-columns: 1fr 4fr;
+    grid-template-columns: 300px 1fr;
     min-height: 100vh;
     height: auto;
 }
 
 #main {
-    overflow: scroll;
+    grid-column: 2/ -1;
+    overflow-y: auto; /* Enable vertical scrolling for the main content */
 }
 
 #main-title-container {
@@ -61,10 +63,12 @@ button:hover, input[type=button]:hover, .close-icon:hover {
     align-items: center;
     gap: 40px;
     border-right: 1px solid black;
-}
-
-#main-content {
-    grid-column: 2/ -1;
+    position: fixed; /* Make it fixed to the viewport */
+    top: 0; /* Align it to the top of the viewport */
+    left: 0; /* Align it to the left of the viewport */
+    width: 300px; /* Ensure it has a fixed width matching the grid column */
+    height: 100vh; /* Full height of the viewport */
+    overflow-y: auto
 }
 
 .side-menu-button {
